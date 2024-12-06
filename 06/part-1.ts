@@ -1,7 +1,3 @@
-// Guard starts pointing up
-// Guard walks forward (up) until they hit an obstacle (represented by #)
-// Any time the guard hits an obstacle, they turn right
-
 import { readFileFromDir } from '../utils';
 
 const exampleInput = readFileFromDir(__dirname, 'input.txt');
@@ -37,7 +33,6 @@ const visited = new Set();
 visited.add(`${guardRow},${guardCol}`);
 
 while (true) {
-    // Check if the guard is facing an obstacle
     const nextRow = guardRow + directions[startingDirection][0];
     const nextCol = guardCol + directions[startingDirection][1];
 
