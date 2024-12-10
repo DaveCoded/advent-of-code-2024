@@ -1,41 +1,57 @@
 import { readFileFromDir } from '../utils';
 
-const input = readFileFromDir(__dirname, 'example.txt');
-
-// Expand this into files with ids
-// Starting with a block of files, numbers alternately represent blocks of files, and blocks of free space
-// Each file in a block has the same id, starting from 0
-// 31232 represents 000.11...22 where dots represent free space
-// If space is represented with 0, that means there's no free space
+const input = readFileFromDir(__dirname, 'input.txt');
 
 const expandLine = (input: string) => {
-    let result = '';
-    let lastId = -1;
+    let result: (number | null)[] = [];
+    let id = 0;
 
     for (let i = 0; i < input.length; i++) {
-        const digit = parseInt(input[i]);
+        const char = input[i];
+        const digit = parseInt(char);
 
         if (i % 2 === 0) {
-            // We have a file block
-            // Only every other i represents a file block id
-            result += `${i / 2}`.repeat(digit);
+            for (let j = 0; j < digit; j++) {
+                result.push(id);
+            }
+            id++;
         } else {
-            // We have a block of empty space
-            result += `.`.repeat(digit);
-        }
-
-        if (i === input.length - 1) {
-            lastId = i / 2;
+            for (let j = 0; j < digit; j++) {
+                result.push(null);
+            }
         }
     }
 
-    return { result, lastId };
+    return result;
 };
 
-const { result: expandedLine, lastId } = expandLine(input);
+const result = expandLine(input);
 
-console.log({ expandedLine, lastId });
+let i = 0;
+let j = result.length - 1;
 
-// loop backwards through the characters of expanded
-// if you have a file, represented by a number, move it to the first free space, starting from the start of the string
-// numbers may be several digits, so work out what the last number will be first, and then work backwards
+while (i < j) {
+    while (result[i] !== null) {
+        i++;
+    }
+
+    while (result[j] === null) {
+        j--;
+    }
+
+    if (i < j) {
+        const temp = result[i];
+        result[i] = result[j];
+        result[j] = temp;
+    }
+}
+
+let sum = 0;
+let idx = 0;
+
+while (result[idx] !== null) {
+    sum += (result[idx] as number) * idx;
+    idx++;
+}
+
+console.log(sum);
